@@ -9,6 +9,7 @@ resource "google_compute_subnetwork" "basic" {
   region                   = "${var.region}"
   ip_cidr_range            = "${var.ip_cidr_range}"
   network                  = "${var.network}"
+  project                  = "${var.project}"
   private_ip_google_access = true
   enable_flow_logs         = true
 }
@@ -25,6 +26,7 @@ resource "google_compute_subnetwork" "ranged" {
   ip_cidr_range            = "${var.ip_cidr_range}"
   network                  = "${var.network}"
   secondary_ip_range       = "${var.secondary_ranges}"
+  project                  = "${var.project}"
   private_ip_google_access = true
   enable_flow_logs         = true
 }

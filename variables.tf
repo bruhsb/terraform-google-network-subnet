@@ -3,6 +3,11 @@ variable "name" {
   description = "Name of subnet."
 }
 
+variable "project" {
+    type = "string"
+    description = "Network project name"
+}
+
 variable "description" {
   type        = "string"
   description = "Description usage of subnet"
