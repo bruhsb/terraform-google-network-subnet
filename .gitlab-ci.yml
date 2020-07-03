@@ -1,0 +1,72 @@
+######### >> Gitlab-CI for Terraform Modules ------------------------------------------
+# This file aims to configure Gitlab-Ci to work with terraform with GCP
+
+## Environment Variables:
+# GITLAB_TOKEN - Access Token for Gitlab
+
+---
+######### >> Global Settings ----------------------------------------------------------
+
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - "/usr/bin/env"
+    - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+stages:
+  - tf_format
+  - init_validate
+  - tag_release
+
+######### >> Format (Terraform Lint) --------------------------------------------------
+# This job will review the format of terraform
+# Docs: https://www.terraform.io/docs/commands/fmt.html
+
+tf_format:
+  stage: tf_format
+  except:
+    - tags
+  script: |
+    #!/bin/sh
+    fmt_diff=$(find . -name "*.tf" | xargs -I{} terraform fmt -write=false {} | sed '/^\s*$/d')
+    if test -n "$fmt_diff"; then
+      echo "******* Terraform formatting error:"
+      echo ""
+      echo $fmt_diff
+      exit 1
+    fi
+
+######### >> Terraform Init & Validate ------------------------------------------------
+# This job initializes the backend and validates the code syntax.
+# Docs: https://www.terraform.io/docs/commands/validate.html
+
+init_validate:
+  stage: init_validate
+  dependencies:
+    - tf_format
+  script:
+    - terraform --version
+    - terraform init -backend=false
+    - terraform validate
+  except:
+    - tags
+
+
+######### >> Tag & Release ------------------------------------------------------------
+# The semantic-release uses the commit messages to determine the type of changes in the codebase.
+# Following formalized conventions for commit messages, semantic-release automatically determines
+# the next semantic version number, generates a changelog and publishes the release.
+# By default semantic-release uses Angular Commit Message Conventions.
+# Source: https://github.com/semantic-release/semantic-release
+# Docs: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines
+
+tag_release:
+  stage: tag_release
+  image: brunosb/semantic-delivery-gitlab:latest
+  before_script:
+    - git fetch --tags -f
+  script:
+    - semantic-delivery-gitlab --token $GITLAB_TOKEN
+  when: manual
+  only:
+    - master
