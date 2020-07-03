@@ -8,7 +8,7 @@
 ######### >> Global Settings ----------------------------------------------------------
 
 image:
-  name: hashicorp/terraform:light
+  name: hashicorp/terraform:0.13.0-beta3
   entrypoint:
     - "/usr/bin/env"
     - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

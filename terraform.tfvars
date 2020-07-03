@@ -19,4 +19,8 @@ secondary_ranges = [
     range_name    = "range-2"
     ip_cidr_range = "10.102.0.0/24"
   },
+  {
+    range_name    = "range-3"
+    ip_cidr_range = "10.103.0.0/28"
+  },
 ]
