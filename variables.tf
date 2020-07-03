@@ -36,7 +36,7 @@ variable "create_secondary_ranges" {
 }
 
 variable "secondary_ranges" {
-  type        = list(string)
+  type        = list
   default     = []
   description = "Create up to 5 alternative CIDR range to represent this subnetwork"
 }
